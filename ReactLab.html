@@ -11,7 +11,7 @@
     <div id="root"></div>
     <script type="text/babel">
 
-        const Reverso = () => {
+        const Reverso = (src) => {
             return (
                 <img src={'sih.png'}
                      style={{
@@ -27,7 +27,7 @@
                 ></img>
             )
         }
-        const Frontal = () => {
+        const Frontal = (src) => {
             return (
                 <img src={'capivara.png'}
                      style={{
@@ -42,29 +42,31 @@
             )
         }
         const Figure = () => {
-            const [isHover, setIsHover] = React.useState(false);
+            const [isOnClick, setIsOnClick] = React.useState(false);
 
-            const handleMouseEnter = () => {
-                setIsHover(true)
-            }
-            const handleMouseLeave = () => {
-                setIsHover(false)
-            }
             return (
                 <figure style={{
-                    width: '300px',
-                    height: '350px',
+                    width: '150px',
+                    height: '200px',
                     margin: '0px',
                     position: 'relative',
                     transition: 'all ease .5s',
                     transformStyle: 'preserve-3d',
-                    transform: isHover ? 'perspective(600px) rotateY(0deg)' : 'perspective(600px) rotateY(180deg)'
+                    transform: isOnClick === true ? 'perspective(600px) rotateY(180deg)' : 'perspective(600px) rotateY(0deg)'
                 }}
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
+                        onClick={() => {
+                            switch (isOnClick) {
+                                case true:
+                                    setIsOnClick(false)
+                                    break
+                                case false:
+                                    setIsOnClick(true)
+                                    break
+                        }
+                        }}
                 >
-                    <Frontal/>
-                    <Reverso/>
+                    <Frontal />
+                    <Reverso />
                 </figure>
             )
         }
@@ -72,16 +74,15 @@
         const CardContainer = () => {
             return (
                 <div style={{
-                    margin: '20px'
+                    margin: '5px',
                 }}>
                     <Figure/>
+
+
                 </div>
             )
         }
-        const Game = () => {
-            document.body.style.margin = '0px'
-            document.body.style.overflowX = 'hidden'
-            document.body.style.overflowY = 'hidden'
+        const GameContainer = () => {
             return (
                 <div style={{
                     /*background: '#0a0a0a',
@@ -92,7 +93,8 @@
                     gridTemplateColumns: 'repeat(4,125px)',
                     justifyContent: 'center',
                     alignContent: 'center',*/
-                    maxWidth: '1200px',
+                    background: '#0a0a0a',
+                    maxWidth: '650px',
                     margin: '50px auto',
                     display: 'flex',
                     flexDirection: 'row',
@@ -101,9 +103,40 @@
                 }}
                 >
                     <CardContainer/>
+                    <CardContainer/>
+                    <CardContainer/>
+                    <CardContainer/>
+                    <CardContainer/>
+                    <CardContainer/>
+                    <CardContainer/>
+                    <CardContainer/>
+                    <CardContainer/>
+                    <CardContainer/>
+                    <CardContainer/>
+                    <CardContainer/>
+                    <CardContainer/>
+                    <CardContainer/>
+                    <CardContainer/>
+                    <CardContainer/>
                 </div>
             )
         }
+
+        const Game = () => {
+            document.body.style.margin = '0px'
+            document.body.style.overflowX = 'hidden'
+            document.body.style.overflowY = 'hidden'
+            document.body.style.background = '#313131'
+            return (
+             <div style={{
+                 background: '#313131'
+             }}>
+                 <GameContainer/>
+             </div>
+            )
+        }
+
+
         const root = ReactDOM.createRoot(document.getElementById('root'))
         root.render(<Game />)
     </script>
