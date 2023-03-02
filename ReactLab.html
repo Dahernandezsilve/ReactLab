@@ -10,18 +10,102 @@
 <body>
     <div id="root"></div>
     <script type="text/babel">
-        const game = () => (
-            <div style={{
-                background: '#0a0a0a'
 
+        const Reverso = () => {
+            return (
+                <img src={'sih.png'}
+                     style={{
+                         width: '100%',
+                         height: '100%',
+                         borderRadius: '5px',
+                         transition: 'allease .5s',
+                         position: 'absolute',
+                         top: '0',
+                         transform: 'perspective(600px) rotateY(180deg)',
+                         backfaceVisibility: 'hidden'
+                     }}
+                ></img>
+            )
+        }
+        const Frontal = () => {
+            return (
+                <img src={'capivara.png'}
+                     style={{
+                         width: '100%',
+                         height: '100%',
+                         borderRadius: '5px',
+                         transition: 'allease .5s',
+                         display: 'block',
+                         backfaceVisibility: 'hidden'
+                     }}
+                ></img>
+            )
+        }
+        const Figure = () => {
+            const [isHover, setIsHover] = React.useState(false);
+
+            const handleMouseEnter = () => {
+                setIsHover(true)
             }
-            }>
+            const handleMouseLeave = () => {
+                setIsHover(false)
+            }
+            return (
+                <figure style={{
+                    width: '300px',
+                    height: '350px',
+                    margin: '0px',
+                    position: 'relative',
+                    transition: 'all ease .5s',
+                    transformStyle: 'preserve-3d',
+                    transform: isHover ? 'perspective(600px) rotateY(0deg)' : 'perspective(600px) rotateY(180deg)'
+                }}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+                >
+                    <Frontal/>
+                    <Reverso/>
+                </figure>
+            )
+        }
 
-            </div>
-        )
-
-
-
+        const CardContainer = () => {
+            return (
+                <div style={{
+                    margin: '20px'
+                }}>
+                    <Figure/>
+                </div>
+            )
+        }
+        const Game = () => {
+            document.body.style.margin = '0px'
+            document.body.style.overflowX = 'hidden'
+            document.body.style.overflowY = 'hidden'
+            return (
+                <div style={{
+                    /*background: '#0a0a0a',
+                    height: '1000px',
+                    width: '100%',
+                    display: 'grid',
+                    gridTemplateRows: 'repeat(4,125px)',
+                    gridTemplateColumns: 'repeat(4,125px)',
+                    justifyContent: 'center',
+                    alignContent: 'center',*/
+                    maxWidth: '1200px',
+                    margin: '50px auto',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    justifyContent: 'center'
+                }}
+                >
+                    <CardContainer/>
+                </div>
+            )
+        }
+        const root = ReactDOM.createRoot(document.getElementById('root'))
+        root.render(<Game />)
     </script>
 </body>
 </html>
