@@ -10,10 +10,9 @@
 <body>
     <div id="root"></div>
     <script type="text/babel">
-
-        const Reverso = (src) => {
+        const Reverso = ({image}) => {
             return (
-                <img src={'sih.png'}
+                <img src={image}
                      style={{
                          width: '100%',
                          height: '100%',
@@ -27,9 +26,9 @@
                 ></img>
             )
         }
-        const Frontal = (src) => {
+        const Frontal = ({image}) => {
             return (
-                <img src={'capivara.png'}
+                <img src={image}
                      style={{
                          width: '100%',
                          height: '100%',
@@ -41,8 +40,7 @@
                 ></img>
             )
         }
-        const Figure = () => {
-            const [isOnClick, setIsOnClick] = React.useState(false);
+        const Figure = ({image, reverso, onClick, girar}) => {
 
             return (
                 <figure style={{
@@ -52,37 +50,70 @@
                     position: 'relative',
                     transition: 'all ease .5s',
                     transformStyle: 'preserve-3d',
-                    transform: isOnClick === true ? 'perspective(600px) rotateY(180deg)' : 'perspective(600px) rotateY(0deg)'
+                    transform: girar === true ? 'perspective(600px) rotateY(180deg)' : 'perspective(600px) rotateY(0deg)'
                 }}
-                        onClick={() => {
-                            switch (isOnClick) {
-                                case true:
-                                    setIsOnClick(false)
-                                    break
-                                case false:
-                                    setIsOnClick(true)
-                                    break
-                        }
-                        }}
+                         onClick={onClick}
                 >
-                    <Frontal />
-                    <Reverso />
+                    <Frontal image={reverso}/>
+                    <Reverso image={image}/>
                 </figure>
             )
         }
 
-        const CardContainer = () => {
+        const CardContainer = ({image, reverso, onClick, girar}) => {
+
+
             return (
                 <div style={{
                     margin: '5px',
                 }}>
-                    <Figure/>
-
-
+                    <Figure image={image} reverso={reverso} onClick={onClick} girar={girar}/>
                 </div>
             )
         }
-        const GameContainer = () => {
+        const GameContainer = ({listImages, handleStartTimer, incrementScore, handleSetIsWin}) => {
+            const [isFliped, setIsFliped] = React.useState(Array(16).fill(false))
+
+            handleSetIsWin(isFliped)
+
+            const firstCard = React.useRef(null)
+            const click = (number) => {
+                handleStartTimer()
+                if (!isFliped[number]){
+                    setIsFliped(oldClick => {
+                        const newList = [...oldClick]
+                        newList[number] =  true
+
+                        return newList
+                    })
+
+                    if (firstCard.current === null){
+                        firstCard.current = number
+                    } else {
+                        incrementScore()
+                        if (listImages[firstCard.current] === listImages[number]){
+
+
+                            console.log("Son iguales")
+
+                        } else {
+                            const saveFirstCard = firstCard.current
+                            setTimeout(()=> {setIsFliped(oldClick => {
+
+                                const newList = [...oldClick]
+                                newList[number] = false
+                                newList[saveFirstCard] = false
+
+                                return newList
+                            })},500)
+                            console.log("No son iguales")
+                        }
+                        firstCard.current = null
+                    }
+                }
+
+            }
+
             return (
                 <div style={{
                     /*background: '#0a0a0a',
@@ -102,36 +133,194 @@
                     justifyContent: 'center'
                 }}
                 >
-                    <CardContainer/>
-                    <CardContainer/>
-                    <CardContainer/>
-                    <CardContainer/>
-                    <CardContainer/>
-                    <CardContainer/>
-                    <CardContainer/>
-                    <CardContainer/>
-                    <CardContainer/>
-                    <CardContainer/>
-                    <CardContainer/>
-                    <CardContainer/>
-                    <CardContainer/>
-                    <CardContainer/>
-                    <CardContainer/>
-                    <CardContainer/>
+                    {
+                        listImages.map((imagen, index) => (
+                            <CardContainer image={imagen} reverso={'lavida.png'} onClick={() => click(index)} girar={isFliped[index]} />
+                        ) )
+                    }
+
                 </div>
             )
         }
 
+        const Victory = () => {
+            return (  <div style={{position: "relative"}}>
+                <div style={{
+                    position: "fixed",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    backgroundColor: "green",
+                    color: "white",
+                    padding: "10px",
+                    borderRadius: "5px",
+                    textAlign: "center",
+                    fontSize: "2em",
+                    fontFamily: 'Gadugi',
+                    fontWeight: "bold",
+                    boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.5)",
+                    zIndex: "9999",
+                    animation: "cambio-colors 0.5s ease-in-out infinite",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center"
+                }}>
+                    <h1 style={{
+                        color: "white",
+                        margin: "0",
+                        display: "inline-block",
+                        marginRight: "20px"
+                    }}>¡Has ganado!</h1>
+                    <div style={{
+                        width: "100px",
+                        height: "20px",
+                        backgroundSize: "cover",
+                        display: "inline-block"
+                    }}></div>
+                </div>
+
+                <style>{`
+        @keyframes cambio-colors {
+          0% { background-color: green; }
+          25% { background-color: yellow; }
+          50% { background-color: orange; }
+          75% { background-color: red; }
+          100% { background-color: purple; }
+        }
+      `}</style>
+                    <img style={{
+                        position: 'absolute',
+                        top: '350px',
+                        right: '100px',
+                        transform: 'translateY(-25%)',
+                        height: '400px',
+                        width: 'auto'
+                    }}src="trofeo.png"></img>
+            </div>
+            )
+        }
+
         const Game = () => {
+            const [isScore, setIsScore] = React.useState(0)
+
+
+            const list = ['capivara.png', 'capivara.png', 'jejeje.png', 'jejeje.png', 'lechugafresco.png', 'lechugafresco.png', 'imagenYogi.jpg', 'imagenYogi.jpg', 'sih.png', 'sih.png', 'uwu.png', 'uwu.png', 'cheems.png', 'cheems.png', 'bomdia.png', 'bomdia.png']
+            const disorder = (list) => {
+                const newList = list.sort(function(a,b) {return (Math.random()-0.5)});
+                return newList
+            }
+
+
+            const handleSetIsWin = (listToVerify) => {
+                if (listToVerify.every((element) => element === true)) {
+                    setIsWin(true)
+                    console.log(listToVerify,"Lista")
+                    console.log(isWin,"Ganó")
+                }  else {
+                    console.log(listToVerify,"Lista")
+                    console.log(isWin,"Perdió")
+                }
+            }
+
+            const [time, setTime] = React.useState(0)
+            const [timerActive, setTimerActive] = React.useState(false);
+            const [isWin, setIsWin] = React.useState(false)
+
+            console.log(time, 'tiempo')
+            React.useEffect(() => {
+                let intervalo
+                if (timerActive && !isWin) {
+                    intervalo = setInterval(() => {
+                        setTime(time => time + 1)
+                    }, 1000)
+                }
+                return () => clearInterval(intervalo)
+            }, [timerActive, isWin])
+
+            const handleStartTimer = () => {
+                if (!timerActive) {
+                    setTimerActive(true)
+                }
+            }
+
+            const [listImages, setlistImages] = React.useState(disorder(list))
+
+            const incrementScore = () => {
+                setIsScore(isScore + 1)
+                console.log(isScore, "Score: ")
+            }
+
+            const refrescarPagina = () => {
+                window.location.reload()
+            }
+
             document.body.style.margin = '0px'
             document.body.style.overflowX = 'hidden'
             document.body.style.overflowY = 'hidden'
             document.body.style.background = '#313131'
+            document.body.style.background = 'linear-gradient(to bottom right, #4c4c4c, #222)'
             return (
              <div style={{
-                 background: '#313131'
+                 background: "linear-gradient(-45deg, #4a4a4a, #333333, #222222, #111111, #000000)",
+                 animation: "gradient 1s ease infinite"
              }}>
-                 <GameContainer/>
+                 <style>
+                     {`
+          @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+          }
+        `}
+                 </style>
+                 <p style={{
+                     position: 'absolute',
+                     display: 'inline-block',
+                     fontSize: '30px',
+                     fontWeight: 'bold',
+                     color: '#FFFFFF',
+                     textShadow: '1px 1px 1px #333',
+                     padding: '8px 12px',
+                     left: '7%',
+                     top: '40%',
+                     borderRadius: '5px',
+                     fontFamily: 'Gadugi',
+
+                 }}>Numero de movimientos: {isScore}</p>
+                 <p style={{
+                     position: 'absolute',
+                     display: 'inline-block',
+                     fontSize: '30px',
+                     fontWeight: 'bold',
+                     color: '#FFFFFF',
+                     textShadow: '1px 1px 1px #333',
+                     padding: '8px 12px',
+                     right: '7%',
+                     top: '10%',
+                     borderRadius: '5px',
+                     fontFamily: 'Gadugi',
+
+                 }}>Tiempo: {time} s</p>
+                 {
+                     isWin ? <Victory/> : null
+                 }
+                 <button style={{
+                     position: 'absolute',
+                     padding: "10px 20px",
+                     backgroundColor: "#4CAF50",
+                     color: "white",
+                     borderRadius: "5px",
+                     border: "none",
+                     cursor: "pointer",
+                     fontSize: '30px',
+                     fontFamily: 'Gadugi',
+                     fontWeight: 'bold',
+                     left: '13%',
+                     top: '50%',
+                     transition: "background-color 0.3s ease-in-out",
+                 }} onClick={refrescarPagina}>Reiniciar ⏱️</button>
+                 <GameContainer listImages={listImages} handleStartTimer={handleStartTimer} incrementScore={incrementScore} handleSetIsWin={handleSetIsWin}/>
              </div>
             )
         }
